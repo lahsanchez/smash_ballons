@@ -12,6 +12,9 @@ void main() {
   Flame.images.loadAll(<String>[
     'bg/fundo.png',
     'balloon.png',
+    'explosion.png',
+    'home/bg.png',
+    'home/button.png',
   ]);
 
   MyGame game = MyGame();

@@ -7,6 +7,9 @@ import 'package:smashballoon/components/balloons.dart';
 import 'package:smashballoon/components/fundo.dart';
 import 'package:smashballoon/components/balloonRed.dart';
 import 'package:smashballoon/controllers/balloonSpawner.dart';
+import 'package:smashballoon/view.dart';
+import 'package:smashballoon/views/home_view.dart';
+import 'package:smashballoon/components/startbutton.dart';
 
 class MyGame extends Game {
   Size screenSize;
@@ -15,6 +18,12 @@ class MyGame extends Game {
   Random rnd;
 
   Fundo fundo;
+
+  View activeView = View.home;
+
+  HomeView homeView;
+
+  StartButton startButton;
 
   BalloonSpawner spawner;
 
@@ -29,6 +38,10 @@ class MyGame extends Game {
 
     fundo = Fundo(this);
 
+    homeView = HomeView(this);
+
+    startButton = StartButton(this);
+
     spawner = BalloonSpawner(this);
   }
 
@@ -40,6 +53,12 @@ class MyGame extends Game {
 
   void render(Canvas canvas) {
     fundo.render(canvas);
+
+    if (activeView == View.home) homeView.render(canvas);
+
+    if (activeView == View.home || activeView == View.lost) {
+      startButton.render(canvas);
+    }
 
     flies.forEach((Balloons balloons) => balloons.render(canvas));
   }
@@ -56,10 +75,26 @@ class MyGame extends Game {
   }
 
   void onTapDown(TapDownDetails d) {
-    flies.forEach((Balloons balloons) {
-      if (balloons.balloonRect.contains(d.globalPosition)) {
-        balloons.onTapDown();
+    bool isHandled = false;
+    bool didHitABalloons = false;
+    if (!isHandled && startButton.rect.contains(d.globalPosition)) {
+      if (activeView == View.home || activeView == View.lost) {
+        startButton.onTapDown();
+        isHandled = true;
+        didHitABalloons = true;
       }
-    });
+    }
+    if (!isHandled) {
+      flies.forEach((Balloons balloons) {
+        if (balloons.balloonRect.contains(d.globalPosition)) {
+          balloons.onTapDown();
+          isHandled = true;
+          didHitABalloons = true;
+        }
+      });
+    }
+    if (activeView == View.playing && !didHitABalloons) {
+      activeView = View.lost;
+    }
   }
 }

@@ -49,3 +49,5 @@ flutter:
     - assets/images/bg/fundo.png
     - assets/images/balloon.png
     - assets/images/explosion.png
+    - assets/images/home/bg.png
+    - assets/images/home/button.png
